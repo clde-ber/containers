@@ -15,7 +15,7 @@ int main()
 	bst.insert(10);
 	bst.deleteNode(25);
 	bst.deleteNode(5);
-	bst.deleteNode(17);
+	//bst.deleteNode(17);
 	//bst.deleteNode(18);
 	bst.prettyPrint();
 	std::cout << "rooot :D" << bst.getRoot()->data << std::endl;
