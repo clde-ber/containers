@@ -43,36 +43,34 @@ namespace ft
             void leftRotate(NodePtr x)
             {
                 NodePtr y = x->right;
-                //NodePtr origin = root;
+                NodePtr origin = root;
 
-                std::cout << "left->rotate" << std::endl;
                 swap(&y->left, &x->right);
                 swap(&x, &y);
                 if (!x->parent)
                 {
-                    root = x;
-                    /*origin->parent = root;
+                    root = y;
+                    origin->parent = root;
                     root->left= origin;
                     origin->left = NULL;
-                    origin->right = NULL;*/
+                    origin->right = NULL;
                     root->color = 0;
                 }
             }
             void rightRotate(NodePtr x)
             {
                 NodePtr y = x->left;
-                //NodePtr origin = root;
+                NodePtr origin = root;
 
-                std::cout << "right->rotate" << std::endl;
                 swap(&x->right, &y->left);
                 swap(&x, &y);
                 if (!x->parent)
                 {
-                    root = x;
-                    //origin->parent = root;
-                    //root->right = origin;
-                    //origin->left = NULL;
-                    //origin->right = NULL;
+                    root = y;
+                    origin->parent = root;
+                    root->right = origin;
+                    origin->left = NULL;
+                    origin->right = NULL;
                     root->color = 0;
                 }
             }
@@ -163,27 +161,21 @@ namespace ft
                 if (key < root->data)
                 {
                     if (found->left || found->right)
-                        rightRotate(found->parent);
-                    found->parent->left = found->left;
-                    std::cout << "found->parent " << found->parent->data << std::endl;
-                }
-                else if (key > root->data)
-                {
-                    if (found->left || found->right)
                         leftRotate(found->parent);
-                    found->parent->right = found->right;
-                    std::cout << "found->parent " << found->parent->data << std::endl;
+                    else
+                        found->parent->right = NULL;
+                    found->parent->left = found->left;
                 }
                 else
                 {
-                    std::cout << "la" << std::endl;
-                    root = found->parent;
-                }  
+                    if (found->left || found->right)
+                        rightRotate(found->parent);
+                    else
+                        found->parent->left = NULL;
+                    found->parent->right = found->right;
+                }
                 delete found;
                 found = NULL;
-                std::cout << "root " << root->data << std::endl;
-                std::cout << "root l " << root->right->data << std::endl;
-                std::cout << "root r" << root->left->data << std::endl;
                 recolor(getRoot());
             }
             void printHelper(NodePtr root, std::string indent, bool last)
