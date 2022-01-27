@@ -64,7 +64,7 @@ namespace ft
                 //NodePtr origin = root;
 
                 std::cout << "right->rotate" << std::endl;
-                swap(&y->right, &x->left);
+                swap(&x->right, &y->left);
                 swap(&x, &y);
                 if (!x->parent)
                 {
@@ -165,16 +165,25 @@ namespace ft
                     if (found->left || found->right)
                         rightRotate(found->parent);
                     found->parent->left = found->left;
+                    std::cout << "found->parent " << found->parent->data << std::endl;
                 }
                 else if (key > root->data)
                 {
                     if (found->left || found->right)
                         leftRotate(found->parent);
                     found->parent->right = found->right;
+                    std::cout << "found->parent " << found->parent->data << std::endl;
                 }
-                initializeNode(found);
+                else
+                {
+                    std::cout << "la" << std::endl;
+                    root = found->parent;
+                }  
                 delete found;
                 found = NULL;
+                std::cout << "root " << root->data << std::endl;
+                std::cout << "root l " << root->right->data << std::endl;
+                std::cout << "root r" << root->left->data << std::endl;
                 recolor(getRoot());
             }
             void printHelper(NodePtr root, std::string indent, bool last)
