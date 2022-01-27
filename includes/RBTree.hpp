@@ -43,34 +43,36 @@ namespace ft
             void leftRotate(NodePtr x)
             {
                 NodePtr y = x->right;
-                NodePtr origin = root;
+                //NodePtr origin = root;
 
+                std::cout << "left->rotate" << std::endl;
                 swap(&y->left, &x->right);
                 swap(&x, &y);
                 if (!x->parent)
                 {
-                    root = y;
-                    origin->parent = root;
+                    root = x;
+                    /*origin->parent = root;
                     root->left= origin;
                     origin->left = NULL;
-                    origin->right = NULL;
+                    origin->right = NULL;*/
                     root->color = 0;
                 }
             }
             void rightRotate(NodePtr x)
             {
                 NodePtr y = x->left;
-                NodePtr origin = root;
+                //NodePtr origin = root;
 
+                std::cout << "right->rotate" << std::endl;
                 swap(&y->right, &x->left);
                 swap(&x, &y);
                 if (!x->parent)
                 {
-                    root = y;
-                    origin->parent = root;
-                    root->right = origin;
-                    origin->left = NULL;
-                    origin->right = NULL;
+                    root = x;
+                    //origin->parent = root;
+                    //root->right = origin;
+                    //origin->left = NULL;
+                    //origin->right = NULL;
                     root->color = 0;
                 }
             }
@@ -161,19 +163,16 @@ namespace ft
                 if (key < root->data)
                 {
                     if (found->left || found->right)
-                        leftRotate(found->parent);
-                    else
-                        found->parent->right = NULL;
+                        rightRotate(found->parent);
                     found->parent->left = found->left;
                 }
-                else
+                else if (key > root->data)
                 {
                     if (found->left || found->right)
-                        rightRotate(found->parent);
-                    else
-                        found->parent->left = NULL;
+                        leftRotate(found->parent);
                     found->parent->right = found->right;
                 }
+                initializeNode(found);
                 delete found;
                 found = NULL;
                 recolor(getRoot());
