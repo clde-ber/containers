@@ -43,36 +43,39 @@ namespace ft
             void leftRotate(NodePtr x)
             {
                 NodePtr y = x->right;
-                NodePtr origin = root;
+                //NodePtr origin = root;
 
-                swap(&y->left, &x->right);
+                NodePtr tmpY = y;
+                NodePtr tmpX = x;
+                NodePtr leftY = y->left;
+
+                y->parent = tmpX->parent;
+                y->left = tmpX;
+                x->parent = tmpY;
+                x->right = leftY;
+                //swap(&x->right, &y->left);
                 swap(&x, &y);
-                if (!x->parent)
-                {
-                    root = y;
-                    origin->parent = root;
-                    root->left= origin;
-                    origin->left = NULL;
-                    origin->right = NULL;
-                    root->color = 0;
-                }
+                //if (!y->parent)
+                root = y;
+                root->color = 0;
             }
-            void rightRotate(NodePtr x)
+            void rightRotate(NodePtr y)
             {
-                NodePtr y = x->left;
-                NodePtr origin = root;
+                NodePtr x = y->left;
+                //NodePtr origin = root;
+                NodePtr tmpY = y;
+                NodePtr tmpX = x;
+                NodePtr rightX = x->right;
 
-                swap(&x->right, &y->left);
+                y->parent = tmpX;
+                y->left = rightX;
+                x->right = tmpY;
+                x->parent = tmpY->parent;
+                //swap(&x->right, &y->left);
                 swap(&x, &y);
-                if (!x->parent)
-                {
-                    root = y;
-                    origin->parent = root;
-                    root->right = origin;
-                    origin->left = NULL;
-                    origin->right = NULL;
-                    root->color = 0;
-                }
+                //if (!x->parent)
+                root = x;
+                root->color = 0;
             }
             void insert(int key)
             {
@@ -101,12 +104,12 @@ namespace ft
                 if (node->data < parentNode->data)
                 {
                     parentNode->left = node;
-                    rightRotate(parentNode);
+                    rightRotate(root);
                 }
                 else
                 {
                     parentNode->right = node;
-                    leftRotate(parentNode);
+                    leftRotate(root);
                 }
                 recolor(getRoot());
             }
@@ -144,6 +147,8 @@ namespace ft
             {
                 NodePtr found = NULL;
                 NodePtr node = getRoot();
+                int i = 0;
+                int count = i;
                 while (node)
                 {
                     if (node->data == key)
@@ -152,31 +157,38 @@ namespace ft
                         node = node->left;
                     else
                         node = node->right;
+                    i++;
                 }
+                count = i;
                 if (!found)
                 {
                     std::cout << "Couldn't find key in the tree"<< std::endl;
                         return ;
                 }
-                if (key < root->data)
+                if (key >= root->data)
                 {
-                    if (found->left || found->right)
-                        leftRotate(found->parent);
+                    while (found && found->left)
+                        rightRotate(root);
+                    if (found == found->parent->right)
+                        found->parent->right = found->right;
                     else
-                        found->parent->right = NULL;
-                    found->parent->left = found->left;
+                        found->parent->left = found->right;
+                    initializeNode(found);
+                    delete found;
+                    recolor(root);
                 }
                 else
                 {
-                    if (found->left || found->right)
-                        rightRotate(found->parent);
+                    while (found && found->right)
+                        leftRotate(root);
+                    if (found == found->parent->right)
+                        found->parent->right = found->left;
                     else
-                        found->parent->left = NULL;
-                    found->parent->right = found->right;
+                        found->parent->left = found->left;
+                    initializeNode(found);
+                    delete found;
+                    recolor(root);
                 }
-                delete found;
-                found = NULL;
-                recolor(getRoot());
             }
             void printHelper(NodePtr root, std::string indent, bool last)
             {
@@ -205,15 +217,15 @@ namespace ft
                 if (root)
                     printHelper(this->root, "", true);
 	        }
-            void freeNodes(NodePtr root)
+            void freeNodes(NodePtr node)
             {
-                if (root != NULL)
+                if (node != NULL)
                 {
-                    freeNodes(root->left);
-                    freeNodes(root->right);
+                    freeNodes(node->left);
+                    freeNodes(node->right);
                 }
-                delete root;
-                root = NULL;
+                delete node;
+                node = NULL;
             }
             // If a node is red, both of its children are black. This means no two nodes on a path can be red nodes.
             // Every path from a root node to a NULL node has the same number of black nodes.
