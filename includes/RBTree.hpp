@@ -43,38 +43,34 @@ namespace ft
             void leftRotate(NodePtr x)
             {
                 NodePtr y = x->right;
-                //NodePtr origin = root;
-
                 NodePtr tmpY = y;
                 NodePtr tmpX = x;
-                NodePtr leftY = y->left;
 
-                y->parent = tmpX->parent;
-                y->left = tmpX;
-                x->parent = tmpY;
-                x->right = leftY;
-                //swap(&x->right, &y->left);
                 swap(&x, &y);
-                //if (!y->parent)
+                x->parent = tmpY;
+                x->left = tmpX->left;
+                x->right = tmpY->left;
+                y->left = tmpX;
+                y->right = tmpY->right;
                 root = y;
+                root->parent = NULL;
                 root->color = 0;
             }
             void rightRotate(NodePtr y)
             {
                 NodePtr x = y->left;
-                //NodePtr origin = root;
                 NodePtr tmpY = y;
                 NodePtr tmpX = x;
-                NodePtr rightX = x->right;
 
-                y->parent = tmpX;
-                y->left = rightX;
-                x->right = tmpY;
-                x->parent = tmpY->parent;
-                //swap(&x->right, &y->left);
                 swap(&x, &y);
-                //if (!x->parent)
+                y->parent = tmpX;
+                y->right = tmpY->right;
+                y->left = tmpX->right;
+                x->right = tmpY;
+                x->left = tmpX->left;
                 root = x;
+                root->parent = NULL;
+                y->parent = tmpX;
                 root->color = 0;
             }
             void insert(int key)
@@ -165,32 +161,48 @@ namespace ft
                     std::cout << "Couldn't find key in the tree"<< std::endl;
                         return ;
                 }
-                std::cout << "****" << std::endl;
-                std::cout << "root" << root->data << std::endl;
-               /* if (key == root->data)
+                Key compare = root->data;
+                if (key < compare)
                 {
-                    while (found && found->left)
-                        rightRotate(root);
                     while (found && found->right)
+                    {
+                        std::cout << "rotate left" << std::endl;
                         leftRotate(root);
+                    }
+                    std::cout << "found right" << found->right << std::endl;
+                    std::cout << "found : " << found->data << std::endl;
+                    prettyPrint();
+                    std::cout << "found parent : " << found->parent->data << std::endl;
+                    std::cout << "*******************" << std::endl;
                     if (found == found->parent->right)
-                        found->parent->right = found->right;
+                        found->parent->right = found->left;
                     else
-                        found->parent->left = found->right;
+                        found->parent->left = found->left;
+                    if (found->left)
+                        found->left->parent = found->parent;
                     initializeNode(found);
                     delete found;
+                    found = NULL;
                     recolor(root);
-                    return ;
-                }*/
-
-                if (key >= root->data)
+                }
+                else if (key > compare)
                 {
-                    while (found && found->left && found->left->right)
+                    while (found && found->left)
+                    {
+                        std::cout << "rotate right" << std::endl;
                         rightRotate(root);
+                    }
+                    std::cout << "found left" << found->left << std::endl;
+                    std::cout << "found : " << found->data << std::endl;
+                    prettyPrint();
+                    std::cout << "found parent : " << found->parent->data << std::endl;
+                    std::cout << "*******************" << std::endl;
                     if (found == found->parent->right)
                         found->parent->right = found->right;
                     else
                         found->parent->left = found->right;
+                    if (found->right)
+                        found->right->parent = found->parent;
                     initializeNode(found);
                     delete found;
                     found = NULL;
@@ -198,17 +210,11 @@ namespace ft
                 }
                 else
                 {
-                    while (found && found->right && found->right->left)
-                        leftRotate(root);
-                    if (found == found->parent->right)
-                        found->parent->right = found->left;
-                    else
-                        found->parent->left = found->left;
-                    initializeNode(found);
-                    delete found;
-                    found = NULL;
-                    recolor(root);
+                    std::cout << "found : " << found->data << std::endl;
+                    prettyPrint();
+                    std::cout << "*******************" << std::endl;
                 }
+                
             }
             void printHelper(NodePtr root, std::string indent, bool last)
             {
