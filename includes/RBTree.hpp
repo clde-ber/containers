@@ -165,10 +165,14 @@ namespace ft
                     std::cout << "Couldn't find key in the tree"<< std::endl;
                         return ;
                 }
-                if (key >= root->data)
+                std::cout << "****" << std::endl;
+                std::cout << "root" << root->data << std::endl;
+               /* if (key == root->data)
                 {
                     while (found && found->left)
                         rightRotate(root);
+                    while (found && found->right)
+                        leftRotate(root);
                     if (found == found->parent->right)
                         found->parent->right = found->right;
                     else
@@ -176,10 +180,25 @@ namespace ft
                     initializeNode(found);
                     delete found;
                     recolor(root);
+                    return ;
+                }*/
+
+                if (key >= root->data)
+                {
+                    while (found && found->left && found->left->right)
+                        rightRotate(root);
+                    if (found == found->parent->right)
+                        found->parent->right = found->right;
+                    else
+                        found->parent->left = found->right;
+                    initializeNode(found);
+                    delete found;
+                    found = NULL;
+                    recolor(root);
                 }
                 else
                 {
-                    while (found && found->right)
+                    while (found && found->right && found->right->left)
                         leftRotate(root);
                     if (found == found->parent->right)
                         found->parent->right = found->left;
@@ -187,6 +206,7 @@ namespace ft
                         found->parent->left = found->left;
                     initializeNode(found);
                     delete found;
+                    found = NULL;
                     recolor(root);
                 }
             }
