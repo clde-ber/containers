@@ -47,13 +47,13 @@ namespace ft
                 NodePtr tmpX = x;
 
                 swap(&x, &y);
-                x->parent = tmpY;
                 x->left = tmpX->left;
                 x->right = tmpY->left;
                 y->left = tmpX;
                 y->right = tmpY->right;
                 root = y;
                 root->parent = NULL;
+                x->parent = root;
                 root->color = 0;
             }
             void rightRotate(NodePtr y)
@@ -63,14 +63,13 @@ namespace ft
                 NodePtr tmpX = x;
 
                 swap(&x, &y);
-                y->parent = tmpX;
                 y->right = tmpY->right;
                 y->left = tmpX->right;
                 x->right = tmpY;
                 x->left = tmpX->left;
                 root = x;
                 root->parent = NULL;
-                y->parent = tmpX;
+                y->parent = root;
                 root->color = 0;
             }
             void insert(int key)
@@ -82,6 +81,8 @@ namespace ft
                 
                 NodePtr fromRoot = root;
                 NodePtr parentNode = NULL;
+                NodePtr child = NULL;
+                std::cout << "************" << std::endl;
                 while (fromRoot)
                 {
                     parentNode = fromRoot;
@@ -89,21 +90,39 @@ namespace ft
                         fromRoot = fromRoot->left;
                     else
                         fromRoot = fromRoot->right;
+                    if (fromRoot)
+                    {
+                        child = fromRoot;
+                        child->parent = parentNode;
+                        /*std::cout << "child " << child->data << std::endl;
+                        if (child->left)
+                        std::cout << "child left" << child->left->data << std::endl;
+                        if (child->right)
+                        std::cout << "child right" << child->right->data << std::endl;*/
+                    }
                 }
                 node->parent = parentNode;
+                if (node->parent)
+                std::cout << "node->parent = " << node->parent->data << std::endl;
+                std::cout << "node = " << node->data << std::endl;
                 if (!node->parent)
                 {
+                    std::cout << "root = node " << std::endl;
+                    //node->parent = NULL;
                     root = node;
+                    std::cout << "node->parent = " << node->parent << std::endl;
                     node->color = 0;
                     return ;
                 }
                 if (node->data < parentNode->data)
                 {
+                    std::cout << "right" << std::endl;
                     parentNode->left = node;
                     rightRotate(root);
                 }
                 else
                 {
+                    std::cout << "left" << std::endl;
                     parentNode->right = node;
                     leftRotate(root);
                 }
@@ -139,6 +158,49 @@ namespace ft
                 if (root->left)
                     root->left->color = 0;
             }
+            int isDeletable(NodePtr found)
+            {
+                if (found->left && found->right && !found->left->left && !found->left->right && !found->right->left && !found->right->right)
+                    {
+                        if (found == found->parent->right)
+                        {
+                            found->parent->right = found->right;
+                            found->parent->right->left = found->left;
+                        }
+                        else
+                        {
+                            found->parent->left = found->right;
+                            found->parent->left->left = found->left;
+                        }
+                        initializeNode(found);
+                        delete found;
+                        found = NULL;
+                        return 1;
+                    }
+                    else if (found->left && !found->right)
+                    {
+                        if (found == found->parent->right)
+                            found->parent->right = found->left;
+                        else
+                            found->parent->left = found->left;
+                        initializeNode(found);
+                        delete found;
+                        found = NULL;
+                        return 1;
+                    }
+                    else if (found->right && !found->left)
+                    {
+                        if (found == found->parent->right)
+                            found->parent->right = found->right;
+                        else
+                            found->parent->left = found->right;
+                        initializeNode(found);
+                        delete found;
+                        found = NULL;
+                        return 1;
+                    }
+                    return 0;
+            }
             void deleteNode(int key)
             {
                 NodePtr found = NULL;
@@ -164,14 +226,14 @@ namespace ft
                 Key compare = root->data;
                 if (key < compare)
                 {
-                    while (found && found->right)
+                    while (root->right && !isDeletable(found))
                     {
                         std::cout << "rotate left" << std::endl;
                         leftRotate(root);
+                        prettyPrint();
                     }
-                    std::cout << "found right" << found->right << std::endl;
+                   /* std::cout << "found right" << found->right << std::endl;
                     std::cout << "found : " << found->data << std::endl;
-                    prettyPrint();
                     std::cout << "found parent : " << found->parent->data << std::endl;
                     std::cout << "*******************" << std::endl;
                     if (found == found->parent->right)
@@ -182,19 +244,19 @@ namespace ft
                         found->left->parent = found->parent;
                     initializeNode(found);
                     delete found;
-                    found = NULL;
+                    found = NULL;*/
                     recolor(root);
                 }
                 else if (key > compare)
                 {
-                    while (found && found->left)
+                    while (root->left && !isDeletable(found))
                     {
                         std::cout << "rotate right" << std::endl;
                         rightRotate(root);
+                        prettyPrint();
                     }
-                    std::cout << "found left" << found->left << std::endl;
+                    /*std::cout << "found left" << found->left << std::endl;
                     std::cout << "found : " << found->data << std::endl;
-                    prettyPrint();
                     std::cout << "found parent : " << found->parent->data << std::endl;
                     std::cout << "*******************" << std::endl;
                     if (found == found->parent->right)
@@ -205,7 +267,7 @@ namespace ft
                         found->right->parent = found->parent;
                     initializeNode(found);
                     delete found;
-                    found = NULL;
+                    found = NULL;*/
                     recolor(root);
                 }
                 else
